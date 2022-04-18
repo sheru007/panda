@@ -8,7 +8,7 @@ const Blog = () => {
   const [title, setTitle ] = useState('dummy title')
     useEffect(() => {
         console.log("client side call ::: useEffect is running in blog component ...... ")
-        fetch('https://d36po8tdh5ajx3.cloudfront.net/api/user').then(res => res.json()).then(data => {
+        fetch('https://www.damensch.io/api/user').then(res => res.json()).then(data => {
             console.log({data})
             setData(data)
         }).catch(error => {
@@ -17,7 +17,7 @@ const Blog = () => {
     }, [])
 
     const hanldeOnClick = () => {
-        fetch('https://d36po8tdh5ajx3.cloudfront.net/api/update-title', {
+        fetch('https://www.damensch.io/api/update-title', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
