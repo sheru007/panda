@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Head from 'next/head'
-import ajax from '../ajax';
+import ajax from '../../ajax';
 
 const Blog = ({csrfToken, header}) => {
   const router = useRouter()
