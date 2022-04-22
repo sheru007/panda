@@ -1,14 +1,22 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import Head from 'next/head'
+import ajax from '../ajax';
 
-const Blog = () => {
+const Blog = ({csrfToken, header}) => {
   const router = useRouter()
   const { pid } = router.query
   const [data, setData] = useState({})
   const [title, setTitle ] = useState('dummy title')
+  
     useEffect(() => {
         console.log("client side call ::: useEffect is running in blog component ...... ")
-        fetch('https://www.damensch.io/api/user').then(res => res.json()).then(data => {
+
+        console.log({csrfToken, header})
+        //cname + "=" + cvalue + ";" + ";path=/";
+        document.cookie = header['set-cookie'][0]
+
+        ajax.get({path: '/api/user'}).then(data => {
             console.log({data})
             setData(data)
         }).catch(error => {
@@ -17,17 +25,15 @@ const Blog = () => {
     }, [])
 
     const hanldeOnClick = () => {
-        fetch('https://www.damensch.io/api/update-title', {
-            method: 'POST',
+        ajax.post({ 
+            path: '/api/update-title',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer sk007`,
             },
-            body: JSON.stringify({
+            body: {
                 title
-            })
-        })  
-        .then(res => res.json()).then(data => {
+            }
+        }).then(data => {
             console.log({data})
             if(data?.title) {
                 setTitle(data?.title)
@@ -39,6 +45,9 @@ const Blog = () => {
         })
     }
   return(<div>
+      <Head>
+        <meta name="csrf-token" content={csrfToken}></meta>
+      </Head>
       <h1>Title :: {data?.title || 'dummy'}</h1>
       
       <p>Blog: {pid}</p>
@@ -50,12 +59,14 @@ const Blog = () => {
       </div>
       )
 }
-// export async function getServerSideProps(context) {
-//     let data = await fetch('https://d36po8tdh5ajx3.cloudfront.net/api');
-//     let res = await data.json()
-//     console.log({ssr_Res : res})
-//     return {
-//         props: {data: res}
-//     }
-// }
+
+
+export async function getServerSideProps(context) {
+    const res = await ajax.get({path: '/api/get-csrf-token'})
+    
+    console.log({ssr_Res : res})
+    return {
+        props: {csrfToken: res.csrfToken, header: res.header}
+    }
+}
 export default Blog
