@@ -28,7 +28,7 @@ const ajax = {
                     'x-xsrf-token': token,
                     ...headers
                 },
-                body: JSON.stringify({...body})
+                body: JSON.stringify({...body, _csrf: token})
             }).then(res => res.json()).then(data => {
                 resolve(data)
             }).catch(error => {
